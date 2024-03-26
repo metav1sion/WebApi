@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Business.Abstract;
+using Business.Dtos.Requests;
+using Business.Dtos.Responses;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers
@@ -7,10 +10,29 @@ namespace WebApi.Controllers
     [ApiController]
     public class BrandsController : ControllerBase
     {
-        [HttpPost]
-        public CreatedBrandResponse Add(CreateBrandRequest createBrandRequest)
-        {
+        private readonly IBrandService _brand;
 
+        public BrandsController(IBrandService brand)
+        {
+            _brand = brand;
+        }
+
+        [HttpPost]
+        public IActionResult Add(CreateBrandRequest createBrandRequest)
+        {
+            var value = _brand.Add(createBrandRequest);
+            return Created("",value);
+        }
+
+        [HttpGet]
+        public IActionResult Get()
+        {
+            return Ok(_brand.GetAll());
         }
     }
 }
+
+//404 başarısız
+//401 yetki olmadığından dolayı başarısız
+//200 başarılı
+//201 başarılı ve eklendi
